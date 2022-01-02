@@ -10,15 +10,16 @@ import (
 )
 
 type Message struct {
-	Username  string
-	Message   string
-	Timestamp string
+	UserName    string
+	MessageText string
+	TimeStamp   string
 }
 
 func main() {
 	r := chi.NewRouter()
-	fmt.Println("Hello, world!")
+	fmt.Print("Service is running")
 	messages := make([]Message, 0)
+
 	r.Post("/api/Messanger", func(w http.ResponseWriter, r *http.Request) {
 		mes := Message{}
 		raw, _ := ioutil.ReadAll(r.Body)
@@ -26,7 +27,7 @@ func main() {
 		fmt.Println(mes)
 		messages = append(messages, mes)
 	})
-	r.Get("/api/Messanger", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/api/Messanger/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
 		id_num, _ := strconv.Atoi(id)
 		if id_num >= 0 && id_num < len(messages) {
@@ -35,5 +36,7 @@ func main() {
 			w.Write(data)
 		}
 	})
+
 	http.ListenAndServe(":5000", r)
+
 }
